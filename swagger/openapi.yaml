@@ -1,0 +1,123 @@
+openapi: '3.0.0'
+info:
+  version: 1.0.0
+  x-go-package: 'github.com/oapi-codegen/runtime'
+  title: Oapi Codegen Golang Fiber
+  license:
+    name: MIT
+  x-oapi-codegen-middlewares:
+    - Middleware
+
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/v1.0/check:
+    get:
+      summary: Check
+      operationId: check
+      responses:
+        '200':
+          description: Health check
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalResponses'
+  /api/v1.0/users:
+    post:
+      summary: Create a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/v1.0/users/{id}:
+    get:
+      summary: Get user by ID
+      operationId: getUserById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Update a user
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      summary: Delete a user
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+        - email
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    GlobalResponses:
+      type: object
+      x-go-type-skip-optional-pointer: true
+      required:
+        - responseCode
+        - responseMessage
+      properties:
+        responseCode:
+          type: string
+          x-go-type-skip-optional-pointer: true
+        responseMessage:
+          type: string
+          x-go-type-skip-optional-pointer: true
