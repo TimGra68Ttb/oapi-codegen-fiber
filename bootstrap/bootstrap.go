@@ -6,7 +6,7 @@ type Application struct {
 	Logger *log.Logger
 }
 
-func NewInitializeBootsrap() Application {
+func NewInitializeBootstrap() Application {
 	app := Application{}
 	return app
 }
