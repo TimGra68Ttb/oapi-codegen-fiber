@@ -28,6 +28,7 @@ func main() {
 	// Create a wrapper for the controller interfaces.
 	wrapper := &handlers.ServerInterfaceWrapper{
 		CheckHandler: checkController,
+		Repo: app.Repo,
 	}
 
 	// Register API handlers.

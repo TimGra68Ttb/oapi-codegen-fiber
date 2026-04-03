@@ -7,7 +7,9 @@ In the api-folder i have put an example of a yaml-specification, including both 
 There is also a generate.go-file that enables me to create the api.gen.go file using go generate ./...
 
 ## Database
-I'm using a map[string]api.User as a fake-database, just to be able to test the api.
+I'm using a map[string]api.User as a database, accessible through the DbInterface.
+That way i can easily change to any other type of database.
+
 
 ## Swagger
 For the swagger part i need the index.html and a copy of the yaml-file that i used to create the api. I renamed it to openapi.yaml

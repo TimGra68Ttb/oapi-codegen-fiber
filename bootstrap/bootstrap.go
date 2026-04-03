@@ -1,13 +1,24 @@
 package bootstrap
 
-import "github.com/gofiber/fiber/v2/log"
+import (
+	"log/slog"
+	"os"
+
+	"github.com/timgra68ttb/oapi-codegen-fiber/db"
+)
 
 type Application struct {
-	Logger *log.Logger
+	Logger *slog.Logger
+	Repo   db.DbRepository
 }
 
 func NewInitializeBootstrap() Application {
-	InitDb()
-	app := Application{}
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	repo := db.NewMapRepository()
+
+	app := Application{
+		Logger: logger,
+		Repo:   repo,
+	}
 	return app
 }
