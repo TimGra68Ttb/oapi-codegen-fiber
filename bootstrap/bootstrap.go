@@ -7,6 +7,7 @@ type Application struct {
 }
 
 func NewInitializeBootstrap() Application {
+	InitDb()
 	app := Application{}
 	return app
 }

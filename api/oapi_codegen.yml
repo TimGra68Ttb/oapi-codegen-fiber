@@ -23,6 +23,18 @@ paths:
               schema:
                 $ref: '#/components/schemas/GlobalResponses'
   /api/v1.0/users:
+    get:
+      summary: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array 
+                items: 
+                  $ref: '#/components/schemas/User'
     post:
       summary: Create a new user
       operationId: createUser
@@ -39,7 +51,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-
   /api/v1.0/users/{id}:
     get:
       summary: Get user by ID

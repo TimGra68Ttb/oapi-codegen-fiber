@@ -35,6 +35,9 @@ type ServerInterface interface {
 	// Check
 	// (GET /api/v1.0/check)
 	Check(c *fiber.Ctx) error
+	// Get all users
+	// (GET /api/v1.0/users)
+	GetUsers(c *fiber.Ctx) error
 	// Create a new user
 	// (POST /api/v1.0/users)
 	CreateUser(c *fiber.Ctx) error
@@ -60,6 +63,12 @@ type MiddlewareFunc fiber.Handler
 func (siw *ServerInterfaceWrapper) Check(c *fiber.Ctx) error {
 
 	return siw.Handler.Check(c)
+}
+
+// GetUsers operation middleware
+func (siw *ServerInterfaceWrapper) GetUsers(c *fiber.Ctx) error {
+
+	return siw.Handler.GetUsers(c)
 }
 
 // CreateUser operation middleware
@@ -138,6 +147,8 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 	}
 
 	router.Get(options.BaseURL+"/api/v1.0/check", wrapper.Check)
+
+	router.Get(options.BaseURL+"/api/v1.0/users", wrapper.GetUsers)
 
 	router.Post(options.BaseURL+"/api/v1.0/users", wrapper.CreateUser)
 
