@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"slices"
+
 	"github.com/timgra68ttb/oapi-codegen-fiber/api"
 	"github.com/timgra68ttb/oapi-codegen-fiber/bootstrap"
 	"github.com/timgra68ttb/oapi-codegen-fiber/controller"
@@ -13,7 +15,6 @@ import (
 type MyHandler struct {
 	Application bootstrap.Application
 	Users       map[string]api.User
-	
 }
 
 // NewServiceInitial creates a new instance of MyHandler.
@@ -56,6 +57,25 @@ func (s *ServerInterfaceWrapper) GetUserById(c *fiber.Ctx, id string) error {
 		return c.Status(404).SendString("User not found")
 	}
 	return c.Status(200).JSON(user)
+}
+
+// GET /api/v1.0/users
+func (s *ServerInterfaceWrapper) GetUsers(c *fiber.Ctx) error {
+	users := []api.User{}
+	for _, user := range bootstrap.Users {
+		users = append(users, user)
+	}
+	slices.SortFunc(users, func(a, b api.User) int {
+		if a.Id < b.Id {
+			return -1
+		}
+		if a.Id > b.Id {
+			return 1
+		}
+		return 0
+	})
+
+	return c.Status(200).JSON(users)
 }
 
 // PUT /api/v1.0/users/{id}
