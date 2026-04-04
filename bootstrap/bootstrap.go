@@ -9,7 +9,7 @@ import (
 
 type Application struct {
 	Logger *slog.Logger
-	Repo   db.DbRepository
+	Repo   db.DbInterface
 }
 
 func NewInitializeBootstrap() Application {
