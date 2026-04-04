@@ -8,61 +8,61 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// MyHandler represents the handler struct.
-type MyHandler struct {
-	Application bootstrap.Application
+// Factory represents the handler struct.
+type Factory struct {
+	app bootstrap.Application
 }
 
-// NewServiceInitial creates a new instance of MyHandler.
-func NewServiceInitial(app bootstrap.Application) MyHandler {
-	return MyHandler{
-		Application: app,
+// NewFactory creates a new instance of MyHandler.
+func NewFactory(app bootstrap.Application) Factory {
+	return Factory{
+		app: app,
 	}
 }
 
-// ServerInterfaceWrapper wraps controller interfaces.
-type ServerInterfaceWrapper struct {
-	CheckHandler controller.ICheckController
-	UserHandler  controller.IUserController
-	Repo         db.DbInterface
+// Server wraps controller interfaces.
+type Server struct {
+	checkController controller.ICheckController
+	userController  controller.IUserController
+	Repo            db.DbInterface
 }
 
-func NewServerInterfaceWrapper(app bootstrap.Application) *ServerInterfaceWrapper {
-	serve := NewServiceInitial(app)
+func NewServer(app bootstrap.Application) *Server {
+	factory := NewFactory(app)
 
-	return &ServerInterfaceWrapper{
-		CheckHandler: serve.CheckHandler(),
-		UserHandler:  serve.UserController(),
-		Repo:         app.Repo,
+	return &Server{
+		checkController: factory.CheckController(),
+		userController:  factory.UserController(),
+		Repo:            app.Repo,
 	}
 }
 
 // Check implements api.ServerInterface.
-func (h *ServerInterfaceWrapper) Check(c *fiber.Ctx) error {
-	return h.CheckHandler.Execute(c)
+func (s *Server) Check(c *fiber.Ctx) error {
+	return s.checkController.Execute(c)
 }
 
 // POST /api/v1.0/users
-func (s *ServerInterfaceWrapper) CreateUser(c *fiber.Ctx) error {
-	return s.UserHandler.Create(c)
+func (s *Server) CreateUser(c *fiber.Ctx) error {
+	return s.userController.Create(c)
 }
 
 // GET /api/v1.0/users/{id}
-func (s *ServerInterfaceWrapper) GetUserById(c *fiber.Ctx, id string) error {
-	return s.UserHandler.GetById(c, id)
+func (s *Server) GetUserById(c *fiber.Ctx, id string) error {
+	return s.userController.GetById(c, id)
 }
 
 // GET /api/v1.0/users
-func (s *ServerInterfaceWrapper) GetUsers(c *fiber.Ctx) error {
-	return s.UserHandler.GetAll(c)
+func (s *Server) GetUsers(c *fiber.Ctx) error {
+	return s.userController.GetAll(c)
 }
 
 // PUT /api/v1.0/users/{id}
-func (s *ServerInterfaceWrapper) UpdateUser(c *fiber.Ctx, id string) error {
-	return s.UserHandler.Update(c, id)
+func (s *Server) UpdateUser(c *fiber.Ctx, id string) error {
+	return s.userController.Update(c, id)
 }
 
 // DELETE /api/v1.0/users/{id}
-func (s *ServerInterfaceWrapper) DeleteUser(c *fiber.Ctx, id string) error {
-	return s.UserHandler.Delete(c, id)
+func (s *Server) DeleteUser(c *fiber.Ctx, id string) error {
+	return s.userController.Delete(c, id)
 }
