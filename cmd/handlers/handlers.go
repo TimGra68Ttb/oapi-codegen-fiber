@@ -30,6 +30,16 @@ type ServerInterfaceWrapper struct {
 	Repo         db.DbRepository
 }
 
+func NewServerInterfaceWrapper(app bootstrap.Application) *ServerInterfaceWrapper {
+    serve := NewServiceInitial(app)
+    
+    return &ServerInterfaceWrapper{
+        CheckHandler: serve.CheckHandler(),
+        Repo:         app.Repo,
+    }
+}
+
+
 // Check implements api.ServerInterface.
 func (h *ServerInterfaceWrapper) Check(c *fiber.Ctx) error {
 	return h.CheckHandler.Execute(c)

@@ -9,31 +9,14 @@ import (
 )
 
 func main() {
-	// Initialize the application's bootstrap components.
-	app := bootstrap.NewInitializeBootstrap()
+    app := bootstrap.NewInitializeBootstrap()
+    f := fiber.New()
 
-	// Create a new Fiber instance.
-	f := fiber.New()
+    f.Static("/swagger", "./swagger")
+    f.Group("/api/v1.0")
 
-	// Serve the Swagger UI at the "/swagger" endpoint.
-	f.Static("/swagger", "./swagger")
+    wrapper := handlers.NewServerInterfaceWrapper(app)
 
-	// Define the API versioned group.
-	f.Group("/api/v1.0")
-
-	// Initialize the application-specific handlers.
-	serve := handlers.NewServiceInitial(app)
-	checkController := serve.CheckHandler()
-
-	// Create a wrapper for the controller interfaces.
-	wrapper := &handlers.ServerInterfaceWrapper{
-		CheckHandler: checkController,
-		Repo: app.Repo,
-	}
-
-	// Register API handlers.
-	api.RegisterHandlers(f, wrapper)
-
-	// Start the server on port 3000.
-	f.Listen(":3000")
+    api.RegisterHandlers(f, wrapper)
+    f.Listen(":3000")
 }
