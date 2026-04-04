@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/timgra68ttb/oapi-codegen-fiber/bootstrap"
 	"github.com/timgra68ttb/oapi-codegen-fiber/controller"
-	"github.com/timgra68ttb/oapi-codegen-fiber/db"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -24,7 +23,6 @@ func NewFactory(app bootstrap.Application) Factory {
 type Server struct {
 	checkController controller.ICheckController
 	userController  controller.IUserController
-	Repo            db.DbInterface
 }
 
 func NewServer(app bootstrap.Application) *Server {
@@ -33,7 +31,6 @@ func NewServer(app bootstrap.Application) *Server {
 	return &Server{
 		checkController: factory.CheckController(),
 		userController:  factory.UserController(),
-		Repo:            app.Repo,
 	}
 }
 
