@@ -2,7 +2,7 @@ package db
 
 import "github.com/timgra68ttb/oapi-codegen-fiber/api"
 
-type DbRepository interface {
+type DbInterface interface {
 	Save(user api.User) error
 	Get(id string) (api.User, error)
 	GetAll() []api.User

@@ -2,7 +2,7 @@ package handlers
 
 import "github.com/timgra68ttb/oapi-codegen-fiber/controller"
 
-func (h *MyHandler) CheckHandler() controller.ICheckController {
+func (f *Factory) CheckController() controller.ICheckController {
 	checkController := controller.NewCheckController()
 	return checkController
 }

@@ -9,14 +9,14 @@ import (
 )
 
 func main() {
-    app := bootstrap.NewInitializeBootstrap()
-    f := fiber.New()
+	app := bootstrap.NewInitializeBootstrap()
+	f := fiber.New()
 
-    f.Static("/swagger", "./swagger")
-    f.Group("/api/v1.0")
+	f.Static("/swagger", "./swagger")
+	f.Group("/api/v1.0")
 
-    wrapper := handlers.NewServerInterfaceWrapper(app)
+	wrapper := handlers.NewServer(app)
 
-    api.RegisterHandlers(f, wrapper)
-    f.Listen(":3000")
+	api.RegisterHandlers(f, wrapper)
+	f.Listen(":3000")
 }
