@@ -2,9 +2,19 @@ package handlers
 
 import (
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/app"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/service"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+func (f *Factory) CheckHandler() CheckHandler {
+	checkController := NewCheckHandler()
+	return checkController
+}
+func (f *Factory) UserHandler() UserHandler {
+	s := service.NewUserService(f.app.Repo)
+	return NewUserHandler(s)
+}
 
 // Factory represents the handler struct.
 type Factory struct {
@@ -20,45 +30,45 @@ func NewFactory(app app.Application) Factory {
 
 // Server wraps controller interfaces.
 type Server struct {
-	checkController ICheckController
-	userController  IUserController
+	checkHandler CheckHandler
+	userHandler  UserHandler
 }
 
 func NewServer(app app.Application) *Server {
 	factory := NewFactory(app)
 
 	return &Server{
-		checkController: factory.CheckController(),
-		userController:  factory.UserController(),
+		checkHandler: factory.CheckHandler(),
+		userHandler:  factory.UserHandler(),
 	}
 }
 
 // Check implements api.ServerInterface.
 func (s *Server) Check(c *fiber.Ctx) error {
-	return s.checkController.Execute(c)
+	return s.checkHandler.Execute(c)
 }
 
 // POST /api/v1.0/users
 func (s *Server) CreateUser(c *fiber.Ctx) error {
-	return s.userController.Create(c)
+	return s.userHandler.Create(c)
 }
 
 // GET /api/v1.0/users/{id}
 func (s *Server) GetUserById(c *fiber.Ctx, id string) error {
-	return s.userController.GetById(c, id)
+	return s.userHandler.GetById(c, id)
 }
 
 // GET /api/v1.0/users
 func (s *Server) GetUsers(c *fiber.Ctx) error {
-	return s.userController.GetAll(c)
+	return s.userHandler.GetAll(c)
 }
 
 // PUT /api/v1.0/users/{id}
 func (s *Server) UpdateUser(c *fiber.Ctx, id string) error {
-	return s.userController.Update(c, id)
+	return s.userHandler.Update(c, id)
 }
 
 // DELETE /api/v1.0/users/{id}
 func (s *Server) DeleteUser(c *fiber.Ctx, id string) error {
-	return s.userController.Delete(c, id)
+	return s.userHandler.Delete(c, id)
 }

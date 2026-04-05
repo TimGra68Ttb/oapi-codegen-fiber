@@ -1,11 +1,14 @@
 package repository
 
-import "github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
+import (
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/domain"
+)
 
 type DbInterface interface {
-	Save(user api.User) error
-	Get(id string) (api.User, error)
-	GetAll() []api.User
+	Save(user domain.User) error
+	Get(id string) (domain.User, error)
+	GetAll() []domain.User
 	Delete(id string) error
-	Update(id string, user api.User) error
+	Update(id string, user domain.User) error
+	EmailExists(email string) bool
 }

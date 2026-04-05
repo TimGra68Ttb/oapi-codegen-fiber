@@ -6,55 +6,55 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/oapi-codegen/runtime/types"
-	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/domain"
 )
 
 type MapRepository struct {
-	data map[string]api.User
+	data map[string]domain.User
 	mu   sync.RWMutex
 }
 
 func NewMapRepository() *MapRepository {
 	repo := &MapRepository{
-		data: make(map[string]api.User),
+		data: make(map[string]domain.User),
 	}
 	for i := range 10 {
 		id := strconv.Itoa(i)
-		repo.data[id] = api.User{
+		email := fmt.Sprintf("user%s@example.com", id)
+		repo.data[id] = domain.User{
 			Id:    id,
-			Email: types.Email(fmt.Sprintf("user%s@example.com", id)),
+			Email: email,
 			Name:  fmt.Sprintf("User%s", id),
 		}
 	}
 	return repo
 }
 
-func (r *MapRepository) Save(user api.User) error {
+func (r *MapRepository) Save(user domain.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.data[user.Id] = user
 	return nil
 }
 
-func (r *MapRepository) Get(id string) (api.User, error) {
+func (r *MapRepository) Get(id string) (domain.User, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	user, ok := r.data[id]
 	if !ok {
-		return api.User{}, fmt.Errorf("user not found")
+		return domain.User{}, fmt.Errorf("user not found")
 	}
 	return user, nil
 }
 
-func (r *MapRepository) GetAll() []api.User {
+func (r *MapRepository) GetAll() []domain.User {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	users := []api.User{}
+	users := []domain.User{}
 	for _, user := range r.data {
 		users = append(users, user)
 	}
-	slices.SortFunc(users, func(a, b api.User) int {
+	slices.SortFunc(users, func(a, b domain.User) int {
 		if a.Id < b.Id {
 			return -1
 		}
@@ -73,7 +73,7 @@ func (r *MapRepository) Delete(id string) error {
 	return nil
 }
 
-func (r *MapRepository) Update(id string, user api.User) error {
+func (r *MapRepository) Update(id string, user domain.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if id != user.Id {
@@ -81,4 +81,15 @@ func (r *MapRepository) Update(id string, user api.User) error {
 	}
 	r.data[id] = user
 	return nil
+}
+
+func (r *MapRepository) EmailExists(email string) bool {
+	r.mu.Lock()
+	defer r.mu.Lock()
+	for _, val := range r.data {
+		if email == string(val.Email) {
+			return true
+		}
+	}
+	return false
 }

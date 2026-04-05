@@ -1,0 +1,211 @@
+// -- check.go
+package handlers
+
+import (
+	"github.com/myapp/oapi-codegen-fiber/internal/api"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+// checkHandler handles the logic for checking the application's status.
+type checkHandler struct {
+	// Add any necessary initialization for use cases or other components here.
+}
+
+// CheckHandler defines the interface for the checkController.
+type CheckHandler interface {
+	Execute(c *fiber.Ctx) error
+}
+
+// NewCheckHandler creates a new instance of checkController.
+func NewCheckHandler() CheckHandler {
+	return &checkHandler{}
+}
+
+// Execute implements the ICheckController interface.
+func (*checkHandler) Execute(c *fiber.Ctx) error {
+	var apiRes api.GlobalResponses
+	apiRes.ResponseCode = "200"
+	apiRes.ResponseMessage = "Go is running!"
+	return c.JSON(apiRes)
+}
+
+// -- servers.go
+package handlers
+
+import (
+	"github.com/myapp/oapi-codegen-fiber/internal/app"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+func (f *Factory) CheckHandler() CheckHandler {
+	checkController := NewCheckHandler()
+	return checkController
+}
+func (f *Factory) UserHandler() UserHandler {
+	// Här skickar vi med Repo från Application-structen
+	return NewUserHandler(f.app.Repo)
+}
+
+// Factory represents the handler struct.
+type Factory struct {
+	app app.Application
+}
+
+// NewFactory creates a new instance of MyHandler.
+func NewFactory(app app.Application) Factory {
+	return Factory{
+		app: app,
+	}
+}
+
+// Server wraps controller interfaces.
+type Server struct {
+	checkHandler CheckHandler
+	userHandler  UserHandler
+}
+
+func NewServer(app app.Application) *Server {
+	factory := NewFactory(app)
+
+	return &Server{
+		checkHandler: factory.CheckHandler(),
+		userHandler:  factory.UserHandler(),
+	}
+}
+
+// Check implements api.ServerInterface.
+func (s *Server) Check(c *fiber.Ctx) error {
+	return s.checkHandler.Execute(c)
+}
+
+// POST /api/v1.0/users
+func (s *Server) CreateUser(c *fiber.Ctx) error {
+	return s.userHandler.Create(c)
+}
+
+// GET /api/v1.0/users/{id}
+func (s *Server) GetUserById(c *fiber.Ctx, id string) error {
+	return s.userHandler.GetById(c, id)
+}
+
+// GET /api/v1.0/users
+func (s *Server) GetUsers(c *fiber.Ctx) error {
+	return s.userHandler.GetAll(c)
+}
+
+// PUT /api/v1.0/users/{id}
+func (s *Server) UpdateUser(c *fiber.Ctx, id string) error {
+	return s.userHandler.Update(c, id)
+}
+
+// DELETE /api/v1.0/users/{id}
+func (s *Server) DeleteUser(c *fiber.Ctx, id string) error {
+	return s.userHandler.Delete(c, id)
+}
+
+// -- user.go
+package handlers
+
+import (
+	"fmt"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
+	"github.com/oapi-codegen/runtime/types"
+	"github.com/myapp/oapi-codegen-fiber/internal/api"
+	"github.com/myapp/oapi-codegen-fiber/internal/domain"
+	"github.com/myapp/oapi-codegen-fiber/internal/repository"
+)
+
+type UserHandler interface {
+	Create(c *fiber.Ctx) error
+	GetById(c *fiber.Ctx, id string) error
+	GetAll(c *fiber.Ctx) error
+	Update(c *fiber.Ctx, id string) error
+	Delete(c *fiber.Ctx, id string) error
+}
+
+type userHandler struct {
+	repo repository.DbInterface
+}
+
+// Vi skickar in repo här så controllern kan prata med databasen
+func NewUserHandler(repo repository.DbInterface) UserHandler {
+	return &userHandler{repo: repo}
+}
+
+func (u *userHandler) Create(c *fiber.Ctx) error {
+	var newUser api.User
+	if err := c.BodyParser(&newUser); err != nil {
+		return c.Status(400).SendString("Invalid request body")
+	}
+
+	if newUser.Id == "" {
+		newUser.Id = uuid.New().String()
+	}
+
+	if err := u.repo.Save(newUser); err != nil {
+		return c.Status(500).JSON(newUser)
+	}
+	return c.Status(201).JSON(newUser)
+}
+
+func (u *userHandler) GetById(c *fiber.Ctx, id string) error {
+	user, err := u.repo.Get(id)
+
+	if err != nil {
+		return c.Status(204).SendString("User not found")
+	}
+	return c.Status(200).JSON(user)
+}
+
+func (u *userHandler) GetAll(c *fiber.Ctx) error {
+	users := u.repo.GetAll()
+	if len(users) == 0 {
+		return c.Status(204).JSON(users)
+	}
+	return c.Status(200).JSON(users)
+}
+
+func (u *userHandler) Update(c *fiber.Ctx, id string) error {
+	var updatedUser api.User
+	if err := c.BodyParser(&updatedUser); err != nil {
+		return c.Status(400).SendString("Invalid request body")
+	}
+	if id != updatedUser.Id {
+		return c.Status(400).SendString(fmt.Sprintf("Id: %s, data: %v", id, updatedUser))
+	}
+
+	if _, err := u.repo.Get(id); err != nil {
+		return c.Status(204).SendString(err.Error())
+	}
+	if err := u.repo.Update(id, updatedUser); err != nil {
+		return c.Status(500).SendString(err.Error())
+	}
+	return c.Status(200).JSON(updatedUser)
+}
+
+func (u *userHandler) Delete(c *fiber.Ctx, id string) error {
+	if err := u.repo.Delete(id); err != nil {
+		return c.SendStatus(500)
+	}
+	return c.SendStatus(200)
+}
+
+func toDomain(api api.User) domain.User {
+	return domain.User{
+		Id:    api.Id,
+		Email: string(api.Email),
+		Name:  api.Name,
+	}
+}
+
+func fromDomain(domain domain.User) api.User {
+	return api.User{
+		Id:    domain.Id,
+		Email: types.Email(domain.Email),
+		Name:  domain.Name,
+	}
+}
