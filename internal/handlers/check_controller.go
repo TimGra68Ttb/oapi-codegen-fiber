@@ -1,7 +1,7 @@
-package controller
+package handlers
 
 import (
-	"github.com/timgra68ttb/oapi-codegen-fiber/api"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
 
 	"github.com/gofiber/fiber/v2"
 )

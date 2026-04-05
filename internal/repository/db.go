@@ -1,6 +1,6 @@
-package db
+package repository
 
-import "github.com/timgra68ttb/oapi-codegen-fiber/api"
+import "github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
 
 type DbInterface interface {
 	Save(user api.User) error

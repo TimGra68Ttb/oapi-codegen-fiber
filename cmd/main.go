@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/timgra68ttb/oapi-codegen-fiber/api"
-	"github.com/timgra68ttb/oapi-codegen-fiber/bootstrap"
-	"github.com/timgra68ttb/oapi-codegen-fiber/cmd/handlers"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/app"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/handlers"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	app := bootstrap.NewInitializeBootstrap()
+	app := app.NewInitializeApp()
 	f := fiber.New()
 
 	f.Static("/swagger", "./swagger")

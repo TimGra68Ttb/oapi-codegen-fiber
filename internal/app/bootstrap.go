@@ -1,20 +1,20 @@
-package bootstrap
+package app
 
 import (
 	"log/slog"
 	"os"
 
-	"github.com/timgra68ttb/oapi-codegen-fiber/db"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/repository"
 )
 
 type Application struct {
 	Logger *slog.Logger
-	Repo   db.DbInterface
+	Repo   repository.DbInterface
 }
 
-func NewInitializeBootstrap() Application {
+func NewInitializeApp() Application {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
-	repo := db.NewMapRepository()
+	repo := repository.NewMapRepository()
 
 	app := Application{
 		Logger: logger,

@@ -1,19 +1,18 @@
 package handlers
 
 import (
-	"github.com/timgra68ttb/oapi-codegen-fiber/bootstrap"
-	"github.com/timgra68ttb/oapi-codegen-fiber/controller"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/app"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 // Factory represents the handler struct.
 type Factory struct {
-	app bootstrap.Application
+	app app.Application
 }
 
 // NewFactory creates a new instance of MyHandler.
-func NewFactory(app bootstrap.Application) Factory {
+func NewFactory(app app.Application) Factory {
 	return Factory{
 		app: app,
 	}
@@ -21,11 +20,11 @@ func NewFactory(app bootstrap.Application) Factory {
 
 // Server wraps controller interfaces.
 type Server struct {
-	checkController controller.ICheckController
-	userController  controller.IUserController
+	checkController ICheckController
+	userController  IUserController
 }
 
-func NewServer(app bootstrap.Application) *Server {
+func NewServer(app app.Application) *Server {
 	factory := NewFactory(app)
 
 	return &Server{

@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/oapi-codegen/runtime/types"
-	"github.com/timgra68ttb/oapi-codegen-fiber/api"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
 )
 
 type MapRepository struct {

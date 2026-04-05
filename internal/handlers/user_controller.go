@@ -1,12 +1,12 @@
-package controller
+package handlers
 
 import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"github.com/timgra68ttb/oapi-codegen-fiber/api"
-	"github.com/timgra68ttb/oapi-codegen-fiber/db"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/repository"
 )
 
 type IUserController interface {
@@ -18,11 +18,11 @@ type IUserController interface {
 }
 
 type userController struct {
-	repo db.DbInterface
+	repo repository.DbInterface
 }
 
 // Vi skickar in repo här så controllern kan prata med databasen
-func NewUserController(repo db.DbInterface) IUserController {
+func NewUserController(repo repository.DbInterface) IUserController {
 	return &userController{repo: repo}
 }
 
