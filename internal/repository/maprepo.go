@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strconv"
@@ -9,11 +10,13 @@ import (
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/domain"
 )
 
+// Types
 type MapRepository struct {
 	data map[string]domain.User
 	mu   sync.RWMutex
 }
 
+// Constructs and injections
 func NewMapRepository() *MapRepository {
 	repo := &MapRepository{
 		data: make(map[string]domain.User),
@@ -30,14 +33,15 @@ func NewMapRepository() *MapRepository {
 	return repo
 }
 
-func (r *MapRepository) Save(user domain.User) error {
+// Implementations
+func (r *MapRepository) Save(c context.Context, user domain.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.data[user.Id] = user
 	return nil
 }
 
-func (r *MapRepository) Get(id string) (domain.User, error) {
+func (r *MapRepository) Get(c context.Context, id string) (domain.User, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	user, ok := r.data[id]
@@ -47,7 +51,7 @@ func (r *MapRepository) Get(id string) (domain.User, error) {
 	return user, nil
 }
 
-func (r *MapRepository) GetAll() []domain.User {
+func (r *MapRepository) GetAll(c context.Context) []domain.User {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	users := []domain.User{}
@@ -66,14 +70,14 @@ func (r *MapRepository) GetAll() []domain.User {
 	return users
 }
 
-func (r *MapRepository) Delete(id string) error {
+func (r *MapRepository) Delete(c context.Context, id string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	delete(r.data, id)
 	return nil
 }
 
-func (r *MapRepository) Update(id string, user domain.User) error {
+func (r *MapRepository) Update(c context.Context, id string, user domain.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if id != user.Id {
@@ -83,13 +87,22 @@ func (r *MapRepository) Update(id string, user domain.User) error {
 	return nil
 }
 
-func (r *MapRepository) EmailExists(email string) bool {
+func (r *MapRepository) EmailExists(c context.Context, email string) bool {
 	r.mu.Lock()
-	defer r.mu.Lock()
+	defer r.mu.Unlock()
 	for _, val := range r.data {
 		if email == string(val.Email) {
 			return true
 		}
+	}
+	return false
+}
+
+func (r *MapRepository) UserExists(c context.Context, id string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, ok := r.data[id]; ok {
+		return true
 	}
 	return false
 }

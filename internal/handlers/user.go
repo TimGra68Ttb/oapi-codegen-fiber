@@ -11,31 +11,27 @@ import (
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/domain"
 )
 
-type UserHandler interface {
-	Create(c *fiber.Ctx) error
-	GetById(c *fiber.Ctx, id string) error
-	GetAll(c *fiber.Ctx) error
-	Update(c *fiber.Ctx, id string) error
-	Delete(c *fiber.Ctx, id string) error
-}
-
+// Service-interfaces - the requirements
 type UserService interface {
 	Create(ctx context.Context, u domain.User) (domain.User, error)
 	Get(ctx context.Context, id string) (domain.User, error)
-	GetAll(ctx context.Context) []domain.User
+	GetAll(ctx context.Context) ([]domain.User, error)
 	Update(ctx context.Context, id string, user domain.User) error
 	Delete(ctx context.Context, id string) error
 }
 
+// Types
 type userHandler struct {
 	service UserService
 }
 
-// Vi skickar in repo här så controllern kan prata med databasen
+
+// Constructors and injections - Startup
 func NewUserHandler(s UserService) UserHandler {
 	return &userHandler{service: s}
 }
 
+// Implementations - of userHandler-interface.
 func (u *userHandler) Create(c *fiber.Ctx) error {
 	var newUser api.User
 	if err := c.BodyParser(&newUser); err != nil {
@@ -59,7 +55,7 @@ func (u *userHandler) GetById(c *fiber.Ctx, id string) error {
 	user, err := u.service.Get(c.Context(), id)
 
 	if err != nil {
-		if errors.Is(err, domain.ErrUserNotFound){
+		if errors.Is(err, domain.ErrUserNotFound) {
 			return c.Status(409).SendString(err.Error())
 		}
 		return c.Status(500).SendString(err.Error())
@@ -68,7 +64,10 @@ func (u *userHandler) GetById(c *fiber.Ctx, id string) error {
 }
 
 func (u *userHandler) GetAll(c *fiber.Ctx) error {
-	users := u.service.GetAll(c.Context())
+	users, err := u.service.GetAll(c.Context())
+	if err != nil {
+		return c.Status(500).SendString(err.Error())
+	}
 	if len(users) == 0 {
 		return c.Status(204).JSON(users)
 	}
@@ -84,17 +83,15 @@ func (u *userHandler) Update(c *fiber.Ctx, id string) error {
 		return c.Status(400).SendString(fmt.Sprintf("Id: %s, data: %v", id, updatedUser))
 	}
 	dom := toDomain(updatedUser)
-	/*
-		if _, err := u.service.Get(c.Context(), id); err != nil {
-			return c.Status(204).SendString(err.Error())
-		}
-		if err := u.service.Update(id, updatedUser); err != nil {
-			return c.Status(500).SendString(err.Error())
-		}*/
 
-	if err := u.service.Update(c.Context(), id, dom); err != nil {
-		return c.Status(204).SendString(err.Error())
+	err := u.service.Update(c.Context(), id, dom)
+	if err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			return c.Status(400).SendString(err.Error())
+		}
+		return c.Status(500).SendString(err.Error())
 	}
+
 	return c.Status(200).JSON(fromDomain(dom))
 }
 
@@ -105,6 +102,7 @@ func (u *userHandler) Delete(c *fiber.Ctx, id string) error {
 	return c.SendStatus(200)
 }
 
+// Mappers
 func toDomain(api api.User) domain.User {
 	return domain.User{
 		Id:    api.Id,
