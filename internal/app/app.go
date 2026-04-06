@@ -5,11 +5,12 @@ import (
 	"os"
 
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/repository"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/service"
 )
 
 type Application struct {
 	Logger *slog.Logger
-	Repo   repository.DbInterface
+	Repo   service.DbInterface
 }
 
 func NewInitializeApp() Application {
