@@ -2,8 +2,15 @@
 
 This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal is to understand Go conventions regarding naming and code organization. I intend to use this repository as a boilerplate/starter template for future projects.
 
+## Getting started
+
+* **Generate api** `go generate ./...` in the project root
+* **Start app** `go run cmd/main.go` in the project root
+* **Swagger-ui** `http://localhost:3000/swagger/`
+
 ## Structure
-```
+
+```text
 .
 ├── README.md
 ├── cmd
@@ -35,7 +42,7 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 
 ## API
 
-The file oapi_codegen.yml includes both api's and components. It defines a health endpoint and a user object including cruds endpoints for it.
+The file oapi_codegen.yml includes both api's and components. It defines a health endpoint and a user object including crud endpoints for it.
 The generate.go and config.yml-files enables the creation of api.gen.go from oapi_codegen.yml, using the command go generate ./...
 The api.gen.go file contains a User-struct, endpoints and a ServerInterface
 
