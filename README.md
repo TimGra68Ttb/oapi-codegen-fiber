@@ -12,9 +12,9 @@ The api.gen.go file contains a User-struct, endpoints and a ServerInterface
 
 There are three handlers in the handlers package, servers.go, check.go and user.go
 
-- servers contains implementations of the ServerInterface created in api.gen.go. It also defines the requirements (interfaces) towards my check and user-handlers and calls them
-- check implements the CheckHandler-interface defined in servers.go and performs the actual check.
-- user implements the UserHandler-interface defined in servers.go, and defines a UserService-interface. It makes the syntactic-checks of the incoming calls and then calls on the UserService-interface
+- **servers** contains implementations of the ServerInterface created in api.gen.go. It also defines the requirements (interfaces) towards the check and user-handlers and calls them
+- **check** implements the CheckHandler-interface defined in servers.go and performs the actual check.
+- **user** implements the UserHandler-interface defined in servers.go, and defines a UserService-interface. It makes the syntactic checks of the incoming calls and then calls on the UserService-interface
 
 ## Domain
 
@@ -23,13 +23,13 @@ Here a domain.User is defined, to make the app-logic independent of future chang
 ## Service
 
 The user.go implements the UserService-interface and defines the DbInterface. It calls the DbInterface-functions, and performs the logical checks (business rules etc.)
+From the service and down the domain.User is used, which means that the service converts between api.User and domain.User when communicating with the handlers.
 Results from the Db-interaction and logical checks are sent back to the handlers
-The service converts the api.User to domain.User on incoming from the handler- and back again when it returns the result to the handler
 
 ## Database
 
 The implementation of tha DbInterface is a map[string]domain.User.
-To be replaced by postgres or any other database
+To be replaced by the persistence layer of your choice.
 
 ## Swagger
 
