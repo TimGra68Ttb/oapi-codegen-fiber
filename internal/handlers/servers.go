@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/timgra68ttb/oapi-codegen-fiber/internal/app"
+	app "github.com/timgra68ttb/oapi-codegen-fiber/internal/application"
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/service"
 
 	"github.com/gofiber/fiber/v2"
