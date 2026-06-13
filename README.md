@@ -34,9 +34,11 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 │   ├── repository
 │   │   └── maprepo.go          # Database repository
 │   └── service
-│       └── user.go             # User services - domain logic
+│   │   └── user.go             # User services - domain logic
+│   └── util
+│       └── envvars.go          # Getters for environment-variables
 └── swagger
-    ├── index.html              # html for swagger
+    └── index.html              # html for swagger
 ```
 
 ## API

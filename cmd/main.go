@@ -1,20 +1,24 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/joho/godotenv"
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
 	app "github.com/timgra68ttb/oapi-codegen-fiber/internal/application"
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/handlers"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/util"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 	app := app.NewInitializeApp()
-
 	wrapper := handlers.NewServer(app)
 	f := setupFiber(wrapper)
 
-	f.Listen(":3000")
+	port := fmt.Sprintf(":%s", util.GetEnvVariable("PORT", "3000"))
+	f.Listen(port)
 }
 
 func setupFiber(wrapper api.ServerInterface) *fiber.App {
@@ -26,4 +30,8 @@ func setupFiber(wrapper api.ServerInterface) *fiber.App {
 
 	api.RegisterHandlers(apiGroup, wrapper)
 	return f
+}
+
+func init() {
+	godotenv.Load()
 }
