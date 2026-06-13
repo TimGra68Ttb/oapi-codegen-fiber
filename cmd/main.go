@@ -10,13 +10,20 @@ import (
 
 func main() {
 	app := app.NewInitializeApp()
+
+	wrapper := handlers.NewServer(app)
+	f := setupFiber(wrapper)
+
+	f.Listen(":3000")
+}
+
+func setupFiber(wrapper api.ServerInterface) *fiber.App {
 	f := fiber.New()
 
 	f.Static("/swagger", "./swagger")
-	f.Group("/api/v1.0")
+	f.Static("/swagger/openapi.yaml", "./internal/api/oapi_codegen.yml")
+	apiGroup := f.Group("/api/v1")
 
-	wrapper := handlers.NewServer(app)
-
-	api.RegisterHandlers(f, wrapper)
-	f.Listen(":3000")
+	api.RegisterHandlers(apiGroup, wrapper)
+	return f
 }

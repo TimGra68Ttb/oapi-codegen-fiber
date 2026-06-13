@@ -9,9 +9,9 @@ info:
     - Middleware
 
 servers:
-  - url: http://localhost
+  - url: /api/v1
 paths:
-  /api/v1.0/check:
+  /check:
     get:
       summary: Check
       operationId: check
@@ -22,7 +22,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GlobalResponses'
-  /api/v1.0/users:
+  /users:
     get:
       summary: Get all users
       operationId: getUsers
@@ -32,8 +32,8 @@ paths:
           content:
             application/json:
               schema:
-                type: array 
-                items: 
+                type: array
+                items:
                   $ref: '#/components/schemas/User'
     post:
       summary: Create a new user
@@ -51,7 +51,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-  /api/v1.0/users/{id}:
+  /users/{id}:
     get:
       summary: Get user by ID
       operationId: getUserById

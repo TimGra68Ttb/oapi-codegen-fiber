@@ -33,22 +33,22 @@ type UpdateUserJSONRequestBody = User
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Check
-	// (GET /api/v1.0/check)
+	// (GET /check)
 	Check(c *fiber.Ctx) error
 	// Get all users
-	// (GET /api/v1.0/users)
+	// (GET /users)
 	GetUsers(c *fiber.Ctx) error
 	// Create a new user
-	// (POST /api/v1.0/users)
+	// (POST /users)
 	CreateUser(c *fiber.Ctx) error
 	// Delete a user
-	// (DELETE /api/v1.0/users/{id})
+	// (DELETE /users/{id})
 	DeleteUser(c *fiber.Ctx, id string) error
 	// Get user by ID
-	// (GET /api/v1.0/users/{id})
+	// (GET /users/{id})
 	GetUserById(c *fiber.Ctx, id string) error
 	// Update a user
-	// (PUT /api/v1.0/users/{id})
+	// (PUT /users/{id})
 	UpdateUser(c *fiber.Ctx, id string) error
 }
 
@@ -146,16 +146,16 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 		router.Use(fiber.Handler(m))
 	}
 
-	router.Get(options.BaseURL+"/api/v1.0/check", wrapper.Check)
+	router.Get(options.BaseURL+"/check", wrapper.Check)
 
-	router.Get(options.BaseURL+"/api/v1.0/users", wrapper.GetUsers)
+	router.Get(options.BaseURL+"/users", wrapper.GetUsers)
 
-	router.Post(options.BaseURL+"/api/v1.0/users", wrapper.CreateUser)
+	router.Post(options.BaseURL+"/users", wrapper.CreateUser)
 
-	router.Delete(options.BaseURL+"/api/v1.0/users/:id", wrapper.DeleteUser)
+	router.Delete(options.BaseURL+"/users/:id", wrapper.DeleteUser)
 
-	router.Get(options.BaseURL+"/api/v1.0/users/:id", wrapper.GetUserById)
+	router.Get(options.BaseURL+"/users/:id", wrapper.GetUserById)
 
-	router.Put(options.BaseURL+"/api/v1.0/users/:id", wrapper.UpdateUser)
+	router.Put(options.BaseURL+"/users/:id", wrapper.UpdateUser)
 
 }
