@@ -4,9 +4,9 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 
 ## Getting started
 
-* **Generate api** `go generate ./...` in the project root
-* **Start app** `go run cmd/main.go` in the project root
-* **Swagger-ui** `http://localhost:3000/swagger/`
+- **Generate api** `go generate ./...` in the project root
+- **Start app** `go run cmd/main.go` in the project root
+- **Swagger-ui** `http://localhost:3000/swagger/`
 
 ## Structure
 
@@ -37,7 +37,6 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 │       └── user.go             # User services - domain logic
 └── swagger
     ├── index.html              # html for swagger
-    └── openapi.yaml            # Api-configuration
 ```
 
 ## API
@@ -71,5 +70,4 @@ To be replaced by the persistence layer of your choice.
 
 ## Swagger
 
-For the swagger part, the index.html and a copy of the yaml-file that was used to create the api is needed. the yaml-file is renamed to openapi.yaml
-The only difference from the original-file is that the portnumber is added to the server config
+For the swagger part, the index.html and the yaml-file that was used to create the api is needed. The yaml-file is aliased in the function setupFiber in main.go to openapi.yaml.
