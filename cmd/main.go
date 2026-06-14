@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/api"
 	app "github.com/timgra68ttb/oapi-codegen-fiber/internal/application"
+	"github.com/timgra68ttb/oapi-codegen-fiber/internal/debug"
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/handlers"
 	"github.com/timgra68ttb/oapi-codegen-fiber/internal/util"
 
@@ -14,6 +15,9 @@ import (
 
 func main() {
 	app := app.NewInitializeApp()
+
+	debug.StartDebugServer(app.Repo)
+	
 	wrapper := handlers.NewServer(app)
 	f := setupFiber(wrapper)
 
