@@ -6,7 +6,9 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 
 - **Generate api** `go generate ./...` in the project root
 - **Start app** `go run cmd/main.go` in the project root
+- **Start app with debug-server** `go run -tags debug cmd/main.go`
 - **Swagger-ui** `http://localhost:3000/swagger/`
+- **Debug** `http://localhost:8081/debug`
 
 ## Structure
 
@@ -23,8 +25,11 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 │   │   ├── config.yml          # Config for generating api.gen.go
 │   │   ├── generate.go         # Config for generating api.gen.go
 │   │   └── oapi_codegen.yml    # Api-configuration
-│   ├── app
+│   ├── application
 │   │   └── app.go              # Initializes the app with Db and logger
+│   ├── debug
+│   │   ├── debug.go            # Starts debug-server (with -tags debug)
+│   │   └── debugDisabled.go    # Emtpty code for run without debug-server 
 │   ├── domain
 │   │   └── user.go             # Defines domain-objects
 │   ├── handlers
@@ -34,9 +39,11 @@ This project is a sandbox for learning Go, oapi-codegen, and Swagger. The goal i
 │   ├── repository
 │   │   └── maprepo.go          # Database repository
 │   └── service
-│       └── user.go             # User services - domain logic
+│   │   └── user.go             # User services - domain logic
+│   └── util
+│       └── envvars.go          # Getters for environment-variables
 └── swagger
-    ├── index.html              # html for swagger
+    └── index.html              # html for swagger
 ```
 
 ## API
@@ -71,3 +78,10 @@ To be replaced by the persistence layer of your choice.
 ## Swagger
 
 For the swagger part, the index.html and the yaml-file that was used to create the api is needed. The yaml-file is aliased in the function setupFiber in main.go to openapi.yaml.
+
+## Debug
+
+Use _-tags debug_ to start a debug-server. The purpouse is to show what's in the 
+MapRepository. The debugport can be set in .env with variablename DEBUGPORT, otherwise just use the fallback port 8081, then no config is needed. 
+Use localhost:8081/debug to show what's in the MapRepository. 
+Add new repositories, tables as needed. If this feature is unneccesary, just remove the debug folder and the row _debug.StartDebugServer(app.Repo)_ from the main.go
